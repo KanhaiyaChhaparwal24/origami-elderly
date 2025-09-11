@@ -1,0 +1,59 @@
+syntax = "proto3";
+package origami.backend;
+
+import "google/protobuf/timestamp.proto";
+
+message VitalSigns {
+  float heart_rate = 1;
+  float spo2 = 2;
+  float body_temp = 3;
+  float systolic = 4;
+  float diastolic = 5;
+}
+
+message SensorReading {
+  string device_id = 1;
+  string patient_id = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  VitalSigns vitals = 4;
+  bool fall_detected = 5;
+}
+
+message MedicationEvent {
+  string patient_id = 1;
+  string medication_id = 2;
+  string medication_name = 3;
+  google.protobuf.Timestamp scheduled_time = 4;
+  google.protobuf.Timestamp taken_time = 5;
+  bool taken = 6;
+}
+
+message EmergencyContact {
+  string contact_id = 1;
+  string name = 2;
+  string relationship = 3;  // FAMILY, CAREGIVER, DOCTOR, NEIGHBOR
+  string phone = 4;
+  string email = 5;
+  bool is_primary = 6;
+  bool notify_on_alert = 7;
+}
+
+message FamilyCommunication {
+  string patient_id = 1;
+  string contact_id = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  string communication_type = 4;  // CALL, SMS, EMAIL, VISIT
+  string message = 5;
+  bool successful = 6;
+  string alert_id = 7;  // Reference to alert that triggered communication
+}
+
+message ElderlyRecord {
+  string patient_id = 1;
+  string name = 2;
+  int32 age = 3;
+  repeated SensorReading sensor_readings = 4;
+  repeated MedicationEvent medication_events = 5;
+  repeated EmergencyContact emergency_contacts = 6;
+  repeated FamilyCommunication family_communications = 7;
+}

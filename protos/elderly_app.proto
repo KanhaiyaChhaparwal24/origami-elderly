@@ -1,0 +1,30 @@
+syntax = "proto3";
+package origami.app;
+
+import "google/protobuf/timestamp.proto";
+
+message FamilyNotification {
+  string patient_id = 1;
+  string contact_id = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  string notification_type = 4;  // EMERGENCY_ALERT, DAILY_UPDATE, WELLNESS_CHECK
+  string message = 5;
+  bool sent_successfully = 6;
+  string delivery_method = 7;  // SMS, EMAIL, CALL
+}
+
+message Alert {
+  string patient_id = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  string alert_type = 3;  // FALL, VITALS_ANOMALY, MED_MISSED, FAMILY_CONTACT_FAILED
+  string message = 4;
+  float score = 5;
+  string alert_id = 6;  // Unique identifier for alert
+}
+
+message CareSummary {
+  string patient_id = 1;
+  repeated Alert alerts = 2;
+  string summary_text = 3;
+  repeated FamilyNotification family_notifications = 4;
+}
