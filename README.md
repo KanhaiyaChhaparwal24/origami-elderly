@@ -47,58 +47,6 @@ Comprehensive care summaries, alert aggregation and prioritization, and family-f
 - `FamilyNotification`: Family communication notifications
 - `CareSummary`: Comprehensive care reports
 
-## Usage Examples
-
-### Basic Patient Monitoring
-```python
-from app.ingest import simulate_patient_data
-from app.storage import save_blob, load_blob
-from app.adapter import sensor_to_alert, build_care_summary
-
-# Generate sample patient data
-record, blob = simulate_patient_data()
-
-# Store data
-path = save_blob(record.patient_id, blob)
-
-# Process alerts
-alerts = [sensor_to_alert(sr) for sr in record.sensor_readings]
-summary = build_care_summary(record.patient_id, alerts)
-```
-
-### Family Communication Integration
-```python
-from app.family_service import FamilyService
-from app.ingest import simulate_family_communication_scenario
-
-# Run complete family communication scenario
-record, care_summary, family_service = simulate_family_communication_scenario()
-
-# Access emergency contacts
-primary_contact = family_service.get_primary_contact(record)
-emergency_contacts = family_service.get_emergency_contacts(record)
-
-# Review family communications
-for comm in record.family_communications:
-    print(f"Sent {comm.communication_type} to {comm.contact_id}: {comm.successful}")
-```
-
-### Custom Alert Processing
-```python
-from app.adapter import sensor_to_alert, should_notify_emergency_contacts
-
-# Process sensor data
-for sensor_reading in record.sensor_readings:
-    alert = sensor_to_alert(sensor_reading)
-    if alert and should_notify_emergency_contacts(alert):
-        # Trigger family notifications
-        family_service.send_emergency_alert(
-            record.patient_id, 
-            primary_contact, 
-            alert
-        )
-```
-
 ## Data Flow
 
 1. **Data Ingestion**: Sensor readings and medication events are captured
@@ -111,16 +59,6 @@ for sensor_reading in record.sensor_readings:
 
 The framework includes comprehensive tests covering data serialization/deserialization roundtrips, alert generation and scoring, family communication scenarios, emergency contact management, and care summary generation.
 
-## Extension Points
-
-The framework is designed for easy extension:
-
-1. **New Sensor Types**: Add new vital sign monitoring in `backend.proto`
-2. **Custom Alert Logic**: Extend alert generation in `adapter.py`
-3. **Communication Channels**: Add new notification methods in `family_service.py`
-4. **Data Storage**: Replace local storage with cloud storage in `storage.py`
-5. **ML Integration**: Add predictive analytics in the `ml/` directory
-
 ## Dependencies
 
 - `protobuf>=4.21.0`: Protocol buffer serialization
@@ -128,5 +66,3 @@ The framework is designed for easy extension:
 - `boto3>=1.26.0`: Optional AWS integration
 
 ---
-
-**Building the future of elderly healthcare through intelligent monitoring and family communication.**

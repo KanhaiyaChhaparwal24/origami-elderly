@@ -23,7 +23,7 @@ def sensor_to_alert(sensor, score=1.0):
         alert.alert_id = alert_id
         return alert
     return None
-
+ 
 def medication_to_alert(med_event):
     if not med_event.taken:
         alert = app_pb.Alert()

@@ -10,7 +10,7 @@ from app.family_service import create_sample_emergency_contacts, FamilyService
 def simulate_patient_data():
     now = datetime.utcnow()
 
-    # Vital signs
+    # Vital sign
     sr1 = build_sensor_reading(
         "deviceA", "patient123", now,
         {"heart_rate": 85, "spo2": 98}

@@ -54,7 +54,7 @@ class FamilyService:
             successful=success,
             alert_id=alert.alert_id
         )
-        
+         
         self.communication_log.append(communication)
         return communication
     

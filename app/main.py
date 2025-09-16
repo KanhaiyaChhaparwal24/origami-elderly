@@ -43,7 +43,7 @@ def family_communication_demo():
     # Run the family communication scenario
     record, care_summary, family_service = simulate_family_communication_scenario()
     
-    # Save the updated record with family communications
+    # Save the updated record with family communication
     from app.serializer import serialize_record
     blob = serialize_record(record)
     path = save_blob(f"{record.patient_id}_with_family", blob)
