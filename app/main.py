@@ -1,6 +1,6 @@
 """
-Multi-Application Main Demo for Origami Framework
-Demonstrates the generic backend supporting multiple domains
+Multi-Application Main Demo for ORIGAMI-GENERIC-BACKEND
+Demonstrates the universal backend supporting multiple domains with any data format
 """
 
 from app.ingest import simulate_multi_application_scenario, get_application_summary

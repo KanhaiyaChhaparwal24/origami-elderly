@@ -1,6 +1,6 @@
-# Origami Multi-Application Framework
+# ORIGAMI-GENERIC-BACKEND
 
-A comprehensive, application-agnostic Python framework supporting multiple domains through a plugin-based architecture with protobuf-based data serialization.
+A comprehensive, application-agnostic Python framework supporting multiple domains through a plugin-based architecture with universal data format support (JSON, XML, CSV, YAML, Protocol Buffers, and more).
 
 ## Overview
 
