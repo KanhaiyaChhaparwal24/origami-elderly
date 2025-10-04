@@ -1,0 +1,85 @@
+syntax = "proto3";
+package origami.security;
+
+import "google/protobuf/timestamp.proto";
+
+// Security sensor data (cameras, motion detectors, etc.)
+message SecuritySensorReading {
+  string sensor_id = 1;                      // Sensor device identifier
+  string zone_id = 2;                        // Security zone identifier
+  google.protobuf.Timestamp timestamp = 3;   // Reading timestamp
+  string sensor_type = 4;                    // CAMERA, MOTION, DOOR, WINDOW, TEMPERATURE
+  bool triggered = 5;                        // Whether sensor was triggered
+  float confidence = 6;                      // Detection confidence (0.0 to 1.0)
+  string detection_details = 7;              // What was detected
+  bytes image_data = 8;                      // Image data (if camera)
+  map<string, float> sensor_values = 9;      // Additional sensor readings
+}
+
+// Access control events
+message AccessEvent {
+  string zone_id = 1;                        // Security zone identifier
+  string access_point_id = 2;                // Door, gate, or entry point
+  google.protobuf.Timestamp timestamp = 3;   // When access occurred
+  string event_type = 4;                     // ENTRY, EXIT, DENIED, FORCED
+  string user_id = 5;                        // Who accessed (if identified)
+  string access_method = 6;                  // KEYCARD, BIOMETRIC, CODE, MANUAL
+  bool authorized = 7;                       // Whether access was authorized
+  string credential_id = 8;                  // ID of credential used
+}
+
+// Security contact/personnel
+message SecurityContact {
+  string contact_id = 1;                     // Unique contact identifier
+  string name = 2;                           // Contact name
+  string role = 3;                           // Role (guard, supervisor, emergency)
+  string phone = 4;                          // Phone number
+  string email = 5;                          // Email address
+  bool is_primary = 6;                       // Is this the primary contact
+  repeated string zone_ids = 7;              // Zones this contact is responsible for
+  string shift_schedule = 8;                 // Work schedule
+  string clearance_level = 9;                // Security clearance level
+}
+
+// Security zone/area record
+message SecurityZone {
+  string zone_id = 1;                        // Unique zone identifier
+  string zone_name = 2;                      // Zone name
+  string zone_type = 3;                      // PERIMETER, BUILDING, ROOM, PARKING
+  string location = 4;                       // Geographic/physical location
+  string security_level = 5;                 // Security classification
+  repeated SecuritySensorReading sensor_readings = 6; // All sensor data
+  repeated AccessEvent access_events = 7;           // All access events
+  repeated SecurityContact contacts = 8;            // Security personnel
+  google.protobuf.Timestamp last_updated = 9;      // Last update time
+  bool armed = 10;                           // Whether zone is armed/active
+  repeated string active_sensors = 11;       // Currently active sensors
+}
+
+// Security-specific alerts
+message SecurityAlert {
+  string alert_id = 1;                       // Unique alert identifier
+  string zone_id = 2;                        // Which zone
+  google.protobuf.Timestamp timestamp = 3;   // Alert generation time
+  string alert_type = 4;                     // INTRUSION, BREACH, TAMPERING, SYSTEM_FAILURE
+  string message = 5;                        // Alert description
+  float score = 6;                           // Alert severity score
+  SecuritySensorReading triggering_reading = 7; // Sensor data that triggered alert
+  AccessEvent triggering_access = 8;         // Access event that triggered alert
+  repeated string recommended_actions = 9;   // Suggested security responses
+  bool requires_immediate_response = 10;     // Whether immediate action needed
+}
+
+// Security report/summary
+message SecurityReport {
+  string zone_id = 1;                        // Zone identifier
+  google.protobuf.Timestamp timestamp = 2;   // Report generation time
+  string period = 3;                         // Time period covered
+  repeated SecurityAlert alerts = 4;         // All alerts in period
+  int32 total_access_events = 5;             // Total access attempts
+  int32 unauthorized_attempts = 6;           // Failed/denied access attempts
+  repeated string security_incidents = 7;    // Notable security incidents
+  string summary_text = 8;                   // Generated summary
+  map<string, int32> sensor_trigger_counts = 9; // Sensor activation counts
+  float overall_security_score = 10;         // Overall security rating
+}

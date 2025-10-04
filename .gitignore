@@ -67,5 +67,5 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific
-data_store/*.pb
+data_store/
 *.log

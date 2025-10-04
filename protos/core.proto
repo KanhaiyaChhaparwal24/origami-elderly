@@ -1,0 +1,167 @@
+syntax = "proto3";
+package origami.core;
+
+import "google/protobuf/timestamp.proto";
+
+// Generic application definition for multi-domain support
+message Application {
+  string app_id = 1;               // Unique identifier (e.g., "elderly_care", "agriculture", "security")
+  string app_name = 2;             // Human-readable name
+  string version = 3;              // Application version
+  string description = 4;          // Brief description of the application
+  repeated string data_types = 5;  // Supported data types for this application
+}
+
+// Generic data format enumeration
+enum DataFormat {
+  UNKNOWN_FORMAT = 0;
+  PROTOBUF = 1;        // Protocol Buffers binary format
+  JSON = 2;            // JavaScript Object Notation
+  XML = 3;             // Extensible Markup Language
+  CSV = 4;             // Comma-Separated Values
+  YAML = 5;            // YAML Ain't Markup Language
+  BINARY = 6;          // Raw binary data
+  TEXT = 7;            // Plain text
+  AVRO = 8;            // Apache Avro
+  MESSAGEPACK = 9;     // MessagePack
+  PARQUET = 10;        // Apache Parquet
+}
+
+// Generic data container that can hold data in any format
+message GenericData {
+  DataFormat format = 1;                     // Format of the data
+  bytes raw_data = 2;                        // Raw data in the specified format
+  string content_type = 3;                   // MIME type or content type descriptor
+  map<string, string> format_metadata = 4;   // Format-specific metadata (encoding, schema version, etc.)
+  int64 size_bytes = 5;                      // Size of the data in bytes
+  string checksum = 6;                       // Data integrity checksum (optional)
+}
+
+// Enhanced generic data packet that can hold any application-specific data in any format
+message DataPacket {
+  string packet_id = 1;                      // Unique packet identifier
+  string app_id = 2;                         // Which application this data belongs to
+  google.protobuf.Timestamp timestamp = 3;   // When the data was captured
+  map<string, string> metadata = 4;          // Generic key-value metadata
+  
+  // Support for multiple data formats
+  oneof data_content {
+    bytes payload = 5;                       // Legacy: Serialized application-specific protobuf data
+    GenericData generic_data = 15;           // New: Data in any format
+    string json_data = 16;                   // Direct JSON string (for convenience)
+    string xml_data = 17;                    // Direct XML string (for convenience)
+    string text_data = 18;                   // Direct text data (for convenience)
+  }
+  
+  string data_type = 6;                      // Type of data in payload (e.g., "sensor_reading", "user_action")
+  string source_id = 7;                      // ID of the data source (device, user, etc.)
+  string schema_version = 8;                 // Version of the data schema being used
+  string encoding = 9;                       // Character encoding (e.g., "utf-8", "ascii")
+  map<string, string> validation_rules = 10; // Optional validation constraints
+}
+
+// Enhanced alert system supporting structured data in multiple formats
+message Alert {
+  string alert_id = 1;                       // Unique alert identifier
+  string app_id = 2;                         // Which application generated this alert
+  google.protobuf.Timestamp timestamp = 3;   // When the alert was generated
+  string type = 4;                           // Alert type (app-specific, e.g., "FALL", "CROP_DISEASE", "INTRUSION")
+  string severity = 5;                       // Severity level: "info", "warning", "critical", "emergency"
+  string message = 6;                        // Human-readable alert message
+  float score = 7;                           // Alert confidence/priority score (0.0 to 1.0)
+  map<string, string> context = 8;           // Additional context data
+  string source_packet_id = 9;               // Reference to triggering DataPacket
+  repeated string affected_entities = 10;    // IDs of affected entities (patients, fields, rooms, etc.)
+  
+  // Enhanced data support
+  oneof alert_data {
+    bytes structured_data = 11;              // Legacy: Binary structured data
+    GenericData generic_alert_data = 12;     // New: Alert data in any format
+    string json_details = 13;                // Direct JSON alert details
+  }
+  
+  string data_schema = 14;                   // Schema identifier for structured data
+  repeated string tags = 15;                 // Searchable tags for categorization
+  map<string, float> metrics = 16;           // Numeric metrics associated with the alert
+}
+
+// Enhanced notification supporting multiple content formats
+message Notification {
+  string notification_id = 1;                // Unique notification identifier
+  string app_id = 2;                         // Which application sent this notification
+  google.protobuf.Timestamp timestamp = 3;   // When notification was sent
+  string type = 4;                           // Notification type (e.g., "EMERGENCY_ALERT", "STATUS_UPDATE")
+  string channel = 5;                        // Delivery channel: "SMS", "EMAIL", "PUSH", "CALL", "WEBHOOK"
+  string recipient_id = 6;                   // Who received the notification
+  string message = 7;                        // Notification content
+  bool sent_successfully = 8;                // Delivery status
+  string alert_id = 9;                       // Reference to triggering alert (if applicable)
+  
+  // Enhanced content support
+  oneof content {
+    string text_content = 10;                // Plain text content
+    string html_content = 11;                // HTML formatted content
+    GenericData rich_content = 12;           // Rich content in any format (JSON, XML, etc.)
+  }
+  
+  map<string, string> delivery_metadata = 13; // Channel-specific delivery metadata
+  repeated string attachments = 14;          // File paths or URLs to attachments
+  string template_id = 15;                   // Template used for generating content
+}
+
+// Generic contact/recipient for notifications
+message Contact {
+  string contact_id = 1;                     // Unique contact identifier
+  string app_id = 2;                         // Which application this contact belongs to
+  string name = 3;                           // Contact name
+  string role = 4;                           // Role in the application (e.g., "family", "farmer", "security_officer")
+  string phone = 5;                          // Phone number
+  string email = 6;                          // Email address
+  map<string, string> preferences = 7;       // Communication preferences
+  bool is_primary = 8;                       // Is this the primary contact
+  repeated string entity_ids = 9;            // Which entities this contact is responsible for
+}
+
+// Enhanced summary supporting multiple data formats and export options
+message ApplicationSummary {
+  string summary_id = 1;                     // Unique summary identifier
+  string app_id = 2;                         // Which application this summary is for
+  google.protobuf.Timestamp timestamp = 3;   // When summary was generated
+  string period = 4;                         // Time period covered (e.g., "daily", "weekly")
+  repeated Alert alerts = 5;                 // All alerts in this period
+  repeated Notification notifications = 6;    // All notifications sent
+  string summary_text = 7;                   // Generated summary description
+  map<string, int32> metrics = 8;            // Key metrics (alert counts, etc.)
+  repeated string entity_ids = 9;            // Entities covered in this summary
+  
+  // Enhanced export and data format support
+  oneof summary_data {
+    GenericData detailed_data = 10;          // Detailed summary in any format
+    string json_summary = 11;               // JSON formatted summary
+    string csv_export = 12;                 // CSV export format
+  }
+  
+  repeated string export_formats = 13;       // Available export formats
+  map<string, string> report_metadata = 14;  // Report generation metadata
+  string template_version = 15;              // Template version used for generation
+}
+
+// Generic data processing configuration
+message DataProcessingConfig {
+  string app_id = 1;                         // Application identifier
+  repeated DataFormat supported_formats = 2; // Supported input data formats
+  DataFormat preferred_output_format = 3;    // Preferred output format
+  map<string, string> format_settings = 4;   // Format-specific processing settings
+  repeated string validation_schemas = 5;    // Schema files for validation
+  bool auto_convert_formats = 6;            // Enable automatic format conversion
+  map<string, float> processing_thresholds = 7; // Processing performance thresholds
+}
+
+// Generic configuration for applications
+message ApplicationConfig {
+  string app_id = 1;                         // Application identifier
+  map<string, string> settings = 2;          // Configuration key-value pairs
+  map<string, float> thresholds = 3;         // Alert thresholds
+  repeated string enabled_features = 4;      // Which features are enabled
+  google.protobuf.Timestamp last_updated = 5; // When config was last modified
+}

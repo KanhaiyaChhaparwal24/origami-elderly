@@ -1,0 +1,107 @@
+syntax = "proto3";
+package origami.elderly;
+
+import "google/protobuf/timestamp.proto";
+
+// Vital signs data from elderly monitoring devices
+message VitalSigns {
+  float heart_rate = 1;       // Beats per minute
+  float spo2 = 2;             // Blood oxygen saturation percentage
+  float body_temp = 3;        // Body temperature in Celsius
+  float systolic = 4;         // Systolic blood pressure
+  float diastolic = 5;        // Diastolic blood pressure
+  float blood_glucose = 6;    // Blood glucose level
+  float weight = 7;           // Weight in kg
+}
+
+// Sensor reading from elderly monitoring devices
+message SensorReading {
+  string device_id = 1;                      // Device identifier (smartwatch, etc.)
+  string patient_id = 2;                     // Patient identifier
+  google.protobuf.Timestamp timestamp = 3;   // When reading was taken
+  VitalSigns vitals = 4;                     // Vital signs data
+  bool fall_detected = 5;                    // Fall detection flag
+  string location = 6;                       // Where the reading was taken
+  float activity_level = 7;                  // Activity/movement level (0.0 to 1.0)
+  string device_status = 8;                  // Device status (battery, connectivity)
+}
+
+// Medication event tracking
+message MedicationEvent {
+  string patient_id = 1;                     // Patient identifier
+  string medication_id = 2;                  // Medication identifier
+  string medication_name = 3;                // Human-readable medication name
+  google.protobuf.Timestamp scheduled_time = 4; // When medication should be taken
+  google.protobuf.Timestamp taken_time = 5;     // When medication was actually taken
+  bool taken = 6;                            // Whether medication was taken
+  string dosage = 7;                         // Medication dosage
+  string notes = 8;                          // Additional notes
+}
+
+// Emergency contact information for elderly patients
+message EmergencyContact {
+  string contact_id = 1;                     // Unique contact identifier
+  string name = 2;                           // Contact name
+  string relationship = 3;                   // Relationship to patient (family, doctor, caregiver)
+  string phone = 4;                          // Phone number
+  string email = 5;                          // Email address
+  bool is_primary = 6;                       // Is this the primary contact
+  bool notify_on_alert = 7;                  // Should this contact be notified of alerts
+  string address = 8;                        // Physical address
+  repeated string preferred_contact_methods = 9; // Preferred notification methods
+}
+
+// Family communication tracking
+message FamilyCommunication {
+  string patient_id = 1;                     // Patient identifier
+  string contact_id = 2;                     // Which contact was communicated with
+  google.protobuf.Timestamp timestamp = 3;   // When communication occurred
+  string communication_type = 4;             // Type: "CALL", "SMS", "EMAIL", "VISIT"
+  string message = 5;                        // Communication content
+  bool successful = 6;                       // Whether communication was successful
+  string alert_id = 7;                       // Reference to alert that triggered communication
+  string response = 8;                       // Response received from contact
+}
+
+// Comprehensive elderly patient record
+message ElderlyRecord {
+  string patient_id = 1;                     // Unique patient identifier
+  string name = 2;                           // Patient name
+  int32 age = 3;                             // Patient age
+  string gender = 4;                         // Patient gender
+  string address = 5;                        // Patient address
+  repeated string medical_conditions = 6;    // Known medical conditions
+  repeated SensorReading sensor_readings = 7;    // All sensor data
+  repeated MedicationEvent medication_events = 8; // Medication history
+  repeated EmergencyContact emergency_contacts = 9; // Emergency contacts
+  repeated FamilyCommunication family_communications = 10; // Communication log
+  google.protobuf.Timestamp last_updated = 11; // When record was last modified
+  string care_plan = 12;                     // Care plan description
+}
+
+// Elderly-specific alert types
+message ElderlyAlert {
+  string alert_id = 1;                       // Unique alert identifier
+  string patient_id = 2;                     // Which patient
+  google.protobuf.Timestamp timestamp = 3;   // When alert was generated
+  string alert_type = 4;                     // FALL, VITALS_ANOMALY, MED_MISSED, DEVICE_OFFLINE
+  string message = 5;                        // Alert description
+  float score = 6;                           // Alert severity score (0.0 to 1.0)
+  SensorReading triggering_reading = 7;      // Sensor data that triggered alert
+  MedicationEvent triggering_medication = 8; // Medication event that triggered alert
+  repeated string recommended_actions = 9;   // Suggested response actions
+}
+
+// Care summary for elderly patients
+message CareReport {
+  string patient_id = 1;                     // Patient identifier
+  google.protobuf.Timestamp timestamp = 2;   // Report generation time
+  string period = 3;                         // Time period covered
+  repeated ElderlyAlert alerts = 4;          // All alerts in period
+  repeated FamilyCommunication communications = 5; // All communications
+  string summary_text = 6;                   // Generated summary
+  VitalSigns average_vitals = 7;             // Average vital signs
+  int32 medication_compliance_rate = 8;      // Percentage of medications taken
+  int32 family_contact_frequency = 9;        // Number of family contacts
+  repeated string health_trends = 10;        // Identified health trends
+}

@@ -1,0 +1,104 @@
+syntax = "proto3";
+package origami.agriculture;
+
+import "google/protobuf/timestamp.proto";
+
+// Soil condition monitoring data
+message SoilCondition {
+  float moisture_level = 1;      // Soil moisture percentage
+  float ph_level = 2;            // Soil pH level
+  float temperature = 3;         // Soil temperature in Celsius
+  float nitrogen_level = 4;      // Nitrogen content
+  float phosphorus_level = 5;    // Phosphorus content
+  float potassium_level = 6;     // Potassium content
+  float organic_matter = 7;      // Organic matter percentage
+}
+
+// Weather monitoring data
+message WeatherData {
+  float temperature = 1;         // Air temperature in Celsius
+  float humidity = 2;            // Humidity percentage
+  float rainfall = 3;            // Rainfall in mm
+  float wind_speed = 4;          // Wind speed in km/h
+  string wind_direction = 5;     // Wind direction
+  float pressure = 6;            // Atmospheric pressure
+  float uv_index = 7;            // UV index
+}
+
+// Crop monitoring sensor reading
+message CropSensorReading {
+  string sensor_id = 1;                      // Sensor device identifier
+  string field_id = 2;                       // Field identifier
+  google.protobuf.Timestamp timestamp = 3;   // Reading timestamp
+  SoilCondition soil = 4;                    // Soil condition data
+  WeatherData weather = 5;                   // Weather data
+  string crop_type = 6;                      // Type of crop
+  string growth_stage = 7;                   // Current growth stage
+  float plant_height = 8;                    // Average plant height
+  float leaf_area_index = 9;                 // Leaf area index
+  bool irrigation_active = 10;               // Irrigation system status
+}
+
+// Farming activity/event
+message FarmingEvent {
+  string field_id = 1;                       // Field identifier
+  string activity_type = 2;                  // PLANTING, WATERING, FERTILIZING, HARVESTING
+  google.protobuf.Timestamp timestamp = 3;   // When activity occurred
+  string description = 4;                    // Activity description
+  map<string, string> parameters = 5;        // Activity-specific parameters
+  string operator_id = 6;                    // Who performed the activity
+  string equipment_used = 7;                 // Equipment or tools used
+}
+
+// Farm contact information
+message FarmContact {
+  string contact_id = 1;                     // Unique contact identifier
+  string name = 2;                           // Contact name
+  string role = 3;                           // Role (farmer, agronomist, supplier)
+  string phone = 4;                          // Phone number
+  string email = 5;                          // Email address
+  bool is_primary = 6;                       // Is this the primary contact
+  repeated string field_ids = 7;             // Fields this contact manages
+  repeated string expertise_areas = 8;       // Areas of expertise
+}
+
+// Farm field record
+message FieldRecord {
+  string field_id = 1;                       // Unique field identifier
+  string field_name = 2;                     // Field name
+  float area_hectares = 3;                   // Field area in hectares
+  string location = 4;                       // Geographic location
+  string current_crop = 5;                   // Currently planted crop
+  repeated CropSensorReading sensor_readings = 6; // All sensor data
+  repeated FarmingEvent farming_events = 7;       // All farming activities
+  repeated FarmContact contacts = 8;              // Related contacts
+  google.protobuf.Timestamp last_updated = 9;    // Last update time
+  string soil_type = 10;                     // Soil classification
+}
+
+// Agriculture-specific alerts
+message AgricultureAlert {
+  string alert_id = 1;                       // Unique alert identifier
+  string field_id = 2;                       // Which field
+  google.protobuf.Timestamp timestamp = 3;   // Alert generation time
+  string alert_type = 4;                     // DROUGHT, DISEASE, PEST, FROST, NUTRIENT_DEFICIENCY
+  string message = 5;                        // Alert description
+  float score = 6;                           // Alert severity score
+  CropSensorReading triggering_reading = 7;  // Sensor data that triggered alert
+  repeated string recommended_actions = 8;   // Suggested farming actions
+  string crop_stage_impact = 9;              // Impact on current growth stage
+}
+
+// Agricultural report/summary
+message FarmReport {
+  string field_id = 1;                       // Field identifier
+  google.protobuf.Timestamp timestamp = 2;   // Report generation time
+  string period = 3;                         // Time period covered
+  repeated AgricultureAlert alerts = 4;      // All alerts in period
+  SoilCondition average_soil_condition = 5;  // Average soil conditions
+  WeatherData average_weather = 6;           // Average weather conditions
+  string summary_text = 7;                   // Generated summary
+  float estimated_yield = 8;                 // Estimated crop yield
+  repeated string growth_milestones = 9;     // Growth milestones achieved
+  map<string, int32> activity_counts = 10;   // Count of different activities
+}
